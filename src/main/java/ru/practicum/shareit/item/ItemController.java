@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.List;
 
-
+/**
+ * TODO Sprint add-controllers.
+ */
 @Validated
 @RestController
 @RequestMapping("/items")
@@ -34,7 +36,6 @@ public class ItemController {
         log.info("POST/items - Запрос на создание вещи пользователем {}: {}", ownerId, itemDto);
         return itemService.createItem(ownerId, itemDto);
     }
-
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@Positive @PathVariable Long itemId) {

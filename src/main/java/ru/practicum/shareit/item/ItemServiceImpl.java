@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
+
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
@@ -122,8 +122,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         if (!wasUpdated) {
-            log.warn("Данные вещи не изменились");
-            throw new ValidationException("Данные вещи не изменились");
+            log.info("Данные вещи не изменились, возвращаем текущее состояние");
         }
 
         return ItemMapper.toItemDto(existingItem);
