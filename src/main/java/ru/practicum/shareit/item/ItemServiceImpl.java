@@ -17,14 +17,12 @@ import java.util.*;
 public class ItemServiceImpl implements ItemService {
 
     private final UserService userService;
+    private static final Logger log = LoggerFactory.getLogger(ItemServiceImpl.class);
+    private final Map<Long, Item> items = new HashMap<>();
 
-    @Autowired
     public ItemServiceImpl(UserService userService) {
         this.userService = userService;
     }
-
-    private static final Logger log = LoggerFactory.getLogger(ItemServiceImpl.class);
-    private final Map<Long, Item> items = new HashMap<>();
 
     @Override
     public ItemDto createItem(Long ownerId, ItemDto itemDto) {

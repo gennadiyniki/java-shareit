@@ -52,14 +52,6 @@ public class GlobalExceptionHandler {
         return new ErrorResponse("Ошибка валидации", errorMessage);
     }
 
-    // ошибки кода (500)
-    @ExceptionHandler(NullPointerException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleNullPointerException(NullPointerException exception) {
-        log.error("NullPointerException: {}", exception.getMessage());
-        return new ErrorResponse("Внутренняя ошибка сервера", "Ошибка обработки данных");
-    }
-
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(ConflictException exception) {
