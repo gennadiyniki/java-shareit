@@ -2,10 +2,12 @@ package ru.practicum.shareit.user;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
 
