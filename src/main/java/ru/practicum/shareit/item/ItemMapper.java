@@ -6,6 +6,7 @@ import org.mapstruct.Mapping;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
+@SuppressWarnings("UnmappedTargetProperties")
 public interface ItemMapper {
 
     @Mapping(source = "owner.id", target = "ownerId")
@@ -13,7 +14,6 @@ public interface ItemMapper {
     @Mapping(target = "lastBooking", ignore = true)
     @Mapping(target = "nextBooking", ignore = true)
     ItemDto toItemDto(Item item);
-
 
     @Mapping(target = "owner", ignore = true)
     Item toItem(ItemDto itemDto);
