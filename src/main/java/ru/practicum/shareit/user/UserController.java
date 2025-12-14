@@ -23,7 +23,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    // вывод всех пользователей
+    // вывод пользователей
     @GetMapping
     public Collection<UserDto> findUserAll() {
         log.info("GET/users - Запрос на вывод всех пользователей");
