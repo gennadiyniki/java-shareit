@@ -46,7 +46,7 @@ public class UserController {
         return userService.updateUser(userId, userDtoUpdates);
     }
 
-    //Найти пользователя по id
+    //Поиск пользователя по id
     @GetMapping("/{userId}")
     public UserDto findUserById(@Positive @PathVariable Long userId) {
         log.info("GET/users/{} - Запрос на просмотр информации о пользователе с id: {}", userId, userId);
