@@ -147,10 +147,18 @@
 					</annotationProcessorPaths>
 					<!-- ВАЖНО: параметры для MapStruct -->
 					<compilerArgs>
-						<arg>-Amapstruct.unmappedTargetPolicy=IGNORE</arg>
-						<arg>-Amapstruct.suppressGeneratorTimestamp=true</arg>
-						<arg>-Amapstruct.defaultComponentModel=spring</arg>
-						<arg>-Amapstruct.verbose=true</arg>
+						<compilerArg>
+							-Amapstruct.unmappedTargetPolicy=IGNORE
+						</compilerArg>
+						<compilerArg>
+							-Amapstruct.suppressGeneratorTimestamp=true
+						</compilerArg>
+						<compilerArg>
+							-Amapstruct.defaultComponentModel=spring
+						</compilerArg>
+						<compilerArg>
+							-Amapstruct.verbose=true
+						</compilerArg>
 					</compilerArgs>
 				</configuration>
 			</plugin>
@@ -172,6 +180,31 @@
 						<goals>
 							<goal>repackage</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- ДОБАВЛЕНО: exec-maven-plugin для запуска приложения -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>run-app-and-tests</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<arguments>
+								<argument>-jar</argument>
+								<argument>target/shareit-0.0.1-SNAPSHOT.jar</argument>
+								<argument>--spring.profiles.active=test</argument>
+							</arguments>
+							<async>true</async>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -284,6 +317,37 @@
 							<skipTests>false</skipTests>
 							<testFailureIgnore>false</testFailureIgnore>
 						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Профиль для интеграционных тестов с Newman -->
+		<profile>
+			<id>integration-test</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>start-app</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>java</executable>
+									<arguments>
+										<argument>-jar</argument>
+										<argument>target/shareit-0.0.1-SNAPSHOT.jar</argument>
+										<argument>--spring.profiles.active=test</argument>
+									</arguments>
+									<async>true</async>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
