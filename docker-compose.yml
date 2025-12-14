@@ -1,22 +1,12 @@
-
-version: '3.9'
-
 services:
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: shareit
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-
   shareit-server:
     build: .
     ports:
       - "127.0.0.1:8080:8080"
     depends_on:
       - postgres
+    # ТОЛЬКО дополнительные настройки, профиль уже в Dockerfile
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - JAVA_TOOL_OPTIONS=-Dspring.profiles.active=prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/shareit
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
