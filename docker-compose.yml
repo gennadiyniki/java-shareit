@@ -1,40 +1,22 @@
-version: '3.8'
+
+version: '3.9'
 
 services:
-  db:
+  postgres:
     image: postgres:16-alpine
-    container_name: postgres
     environment:
       POSTGRES_DB: shareit
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   shareit-server:
     build: .
-    container_name: shareit-server
     ports:
-      - "127.0.0.1:8080:8080"  # Явно на localhost для wait-for-it.sh
+      - "127.0.0.1:8080:8080"
     depends_on:
-      db:
-        condition: service_healthy
+      - postgres
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - JAVA_TOOL_OPTIONS=-Dspring.profiles.active=prod  # ← ГАРАНТИРОВАННО СРАБОТАЕТ!
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
-
-volumes:
-  postgres_data:
+      - JAVA_TOOL_OPTIONS=-Dspring.profiles.active=prod
