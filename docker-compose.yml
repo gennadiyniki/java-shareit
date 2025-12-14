@@ -12,17 +12,28 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   shareit-server:
     build: .
     container_name: shareit-server
     ports:
-      - "8080:8080"
+      - "8080:8080"  # Убедитесь что этот порт есть!
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-    restart: unless-stopped
+      - SPRING_PROFILES_ACTIVE=prod  # ЭТО ОБЯЗАТЕЛЬНО!
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
 volumes:
   postgres_data:
