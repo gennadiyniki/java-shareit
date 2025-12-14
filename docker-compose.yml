@@ -1,39 +1,17 @@
-version: '3.8'
-
 services:
-  db:
-    image: postgres:16-alpine
-    container_name: postgres
-    environment:
-      POSTGRES_DB: shareit
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   shareit-server:
     build: .
     container_name: shareit-server
     ports:
-      - "8080:8080"  # Убедитесь что этот порт есть!
+      - "127.0.0.1:8080:8080"  # ИЗМЕНИТЬ ЭТУ СТРОКУ!
     depends_on:
       db:
         condition: service_healthy
     environment:
-      - SPRING_PROFILES_ACTIVE=prod  # ЭТО ОБЯЗАТЕЛЬНО!
+      - SPRING_PROFILES_ACTIVE=prod
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
-
-volumes:
-  postgres_data:
