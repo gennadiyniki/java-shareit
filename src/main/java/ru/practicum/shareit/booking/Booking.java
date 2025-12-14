@@ -1,39 +1,61 @@
 package ru.practicum.shareit.booking;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@Entity
+@ToString
+@Table(name = "Bookings")
+@NoArgsConstructor
 public class Booking {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Дата начала бронирования должна быть указана")
-    @FutureOrPresent(message = "Дата начала должна быть в настоящем или будущем")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Column(name = "start_time", nullable = false) // Теперь имя колонки совпадает с БД
     private LocalDateTime start;
 
-    @NotNull(message = "Дата окончания бронирования должна быть указана")
-    @Future(message = "Дата окончания должна быть в будущем")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Column(name = "end_time", nullable = false) // Приводим в соответствие с БД
     private LocalDateTime end;
 
-    @NotNull(message = "Вещь должна быть указана")
+    //вещь
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", nullable = false)
+    @ToString.Exclude
     private Item item;
 
-    @NotNull(message = "Бронирующий пользователь должен быть указан")
+    //пользователь
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booker_id", nullable = false)
     private User booker;
 
+    //статус брони
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
-    private Long itemId;
-    private Long bookerId;
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private LocalDateTime createdDate;
+
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdDate == null) {
+            createdDate = LocalDateTime.now();
+        }
+        if (status == null) {
+            status = BookingStatus.WAITING; // статус по умолчанию
+        }
+    }
 
 }
