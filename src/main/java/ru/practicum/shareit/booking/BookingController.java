@@ -65,7 +65,15 @@ public class BookingController {
         log.info("GET /bookings - Запрос списка бронирований пользователя: userId={}, state={}, from={}, size={}",
                 bookerId, state, from, size);
         validatePaginationParams(from, size);
-        List<BookingDto> result = bookingService.getUserBookings(bookerId, state, from, size);
+        BookingState bookingState;
+        try {
+            bookingState = BookingState.valueOf(state.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Unknown state: " + state);
+        }
+
+        // ВАЖНО: передаем bookingState, а не state!
+        List<BookingDto> result = bookingService.getUserBookings(bookerId, bookingState, from, size);
         log.info("GET /bookings - Найдено {} бронирований для пользователя {}", result.size(), bookerId);
         return result;
     }
@@ -91,7 +99,13 @@ public class BookingController {
             @RequestParam(defaultValue = "10") int size) {
         log.info("GET /bookings/owner - Запрос списка бронирований владельца: ownerId={}, state={}, from={}, size={}",
                 userId, state, from, size);
-        List<BookingDto> result = bookingService.getOwnerBookings(userId, state, from, size);
+        BookingState bookingState;
+        try {
+            bookingState = BookingState.valueOf(state.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Unknown state: " + state);
+        }
+        List<BookingDto> result = bookingService.getOwnerBookings(userId, bookingState, from, size);
         log.info("GET /bookings/owner - Найдено {} бронирований для владельца {}", result.size(), userId);
         return result;
     }

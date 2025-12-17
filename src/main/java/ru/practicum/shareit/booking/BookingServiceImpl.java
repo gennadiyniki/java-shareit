@@ -100,8 +100,7 @@ public class BookingServiceImpl implements BookingService {
 
     //Получение списка всех бронирований текущего пользователя
     @Override
-    public List<BookingDto> getUserBookings(Long bookerId, String state, int from, int size) {
-
+    public List<BookingDto> getUserBookings(Long bookerId, BookingState state, int from, int size) {
         userRepository.findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
@@ -110,7 +109,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime now = LocalDateTime.now();
         List<Booking> bookings;
 
-        switch (state.toUpperCase()) {
+        switch (state) {
             case CURRENT:
                 bookings = bookingRepository.findByBookerIdAndStartBeforeAndEndAfter(bookerId, now, now, pageable);
                 break;
@@ -128,7 +127,6 @@ public class BookingServiceImpl implements BookingService {
                 break;
             default:
                 bookings = bookingRepository.findByBookerId(bookerId, pageable);
-
         }
         return bookings.stream()
                 .map(bookingMapper::toBookingDto)
@@ -137,7 +135,7 @@ public class BookingServiceImpl implements BookingService {
 
     //Получение списка бронирований для всех вещей текущего пользователя
     @Override
-    public List<BookingDto> getOwnerBookings(Long ownerId, String state, int from, int size) {
+    public List<BookingDto> getOwnerBookings(Long ownerId, BookingState state, int from, int size) {
         userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
@@ -147,20 +145,20 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings;
 
         // Фильтрация по состоянию
-        switch (state.toUpperCase()) {
-            case "CURRENT":
+        switch (state) {
+            case CURRENT:
                 bookings = bookingRepository.findByItemOwnerIdAndStartBeforeAndEndAfter(ownerId, now, now, pageable);
                 break;
-            case "PAST":
+            case PAST:
                 bookings = bookingRepository.findByItemOwnerIdAndEndBefore(ownerId, now, pageable);
                 break;
-            case "FUTURE":
+            case FUTURE:
                 bookings = bookingRepository.findByItemOwnerIdAndStartAfter(ownerId, now, pageable);
                 break;
-            case "WAITING":
+            case WAITING:
                 bookings = bookingRepository.findByItemOwnerIdAndStatus(ownerId, BookingStatus.WAITING, pageable);
                 break;
-            case "REJECTED":
+            case REJECTED:
                 bookings = bookingRepository.findByItemOwnerIdAndStatus(ownerId, BookingStatus.REJECTED, pageable);
                 break;
             default:
