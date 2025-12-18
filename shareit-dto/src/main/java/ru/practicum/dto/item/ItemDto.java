@@ -1,9 +1,9 @@
-package ru.practicum.server.item;
+package ru.practicum.dto.item;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import ru.practicum.server.booking.BookingDto;
+import ru.practicum.dto.booking.BookingDto;
 
 import java.util.List;
 

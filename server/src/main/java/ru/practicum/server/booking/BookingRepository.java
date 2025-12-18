@@ -1,7 +1,10 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.server.booking;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import ru.practicum.dto.booking.BookingStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,4 +46,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Проверка, брал ли пользователь вещь в аренду в прошлом (проверка комментов)
     boolean existsByBookerIdAndItemIdAndEndBefore(Long userId, Long itemId, LocalDateTime time);
 
+    // УДАЛИТЕ ЭТОТ НЕПРАВИЛЬНЫЙ МЕТОД:
+    // List<Booking> findOverlappingBookings(Long id, LocalDateTime start, LocalDateTime end);
+
+    // ВМЕСТО НЕГО ДОБАВЬТЕ ЭТОТ КОРРЕКТНЫЙ МЕТОД:
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.item.id = :itemId " +
+            "AND b.status IN ('APPROVED', 'WAITING') " + // проверяем только активные бронирования
+            "AND (b.start < :end AND b.end > :start)") // проверяем пересечение интервалов
+    List<Booking> findOverlappingBookings(
+            @Param("itemId") Long itemId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end);
 }

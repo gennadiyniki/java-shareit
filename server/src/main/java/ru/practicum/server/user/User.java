@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.server.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;

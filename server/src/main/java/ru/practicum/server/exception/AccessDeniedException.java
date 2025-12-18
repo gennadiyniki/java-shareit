@@ -1,4 +1,4 @@
-package ru.practicum.shareit.exception;
+package ru.practicum.server.exception;
 
 public class AccessDeniedException extends RuntimeException {
     public AccessDeniedException(String message) {

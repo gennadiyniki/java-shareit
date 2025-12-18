@@ -1,13 +1,13 @@
-package ru.practicum.shareit.user;
+package ru.practicum.server.user;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exception.ConflictException;
-import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.server.exception.ConflictException;
+import ru.practicum.server.exception.NotFoundException;
+import ru.practicum.server.exception.ValidationException;
 
 import java.util.Collection;
 import java.util.List;

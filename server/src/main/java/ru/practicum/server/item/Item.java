@@ -1,10 +1,11 @@
-package ru.practicum.shareit.item;
+package ru.practicum.server.item;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.user.User;
+import ru.practicum.server.request.ItemRequest;
+import ru.practicum.server.user.User;
 
 @Getter
 @Setter
@@ -19,25 +20,19 @@ public class Item {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    //описание
     @Column(name = "description", length = 1000)
     private String description;
 
-    //Доступен или нет
     @Column(name = "available", nullable = false)
     private Boolean available;
 
-    //владелец вещи
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
-    @ToString.Exclude // чтобы избежать циклических ссылок в toString()
+    @ToString.Exclude
     private User owner;
 
-    //запрос
-    @Column(name = "request_id")
-    private Long requestId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
+    @ToString.Exclude
+    private ItemRequest request;
 }
-
-
-
-

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.server.item;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.server.user;
 
 public enum UserState {
     ACTIVE, BLOCKED, DELETED;

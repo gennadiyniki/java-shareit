@@ -1,10 +1,10 @@
-package ru.practicum.shareit.item;
+package ru.practicum.server.item;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.user.User;
+import ru.practicum.server.user.User;
 
 import java.time.LocalDateTime;
 
