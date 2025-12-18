@@ -6,8 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"ru.practicum.gateway", "ru.practicum.server.dto"})
-public class ShareItGateway {
+public class ShareItGatewayApplication {
 public static void main(String[] args) {
-       SpringApplication.run(ShareItGateway.class, args);
+       SpringApplication.run(ShareItGatewayApplication.class, args);
     }
 }
