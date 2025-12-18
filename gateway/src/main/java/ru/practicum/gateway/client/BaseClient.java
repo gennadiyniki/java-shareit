@@ -92,7 +92,8 @@ public class BaseClient {
         } catch (HttpStatusCodeException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }
-        return prepareGatewayResponse(shareitServerResponse);
+       // return prepareGatewayResponse(shareitServerResponse);
+        return shareitServerResponse;
     }
 
     private HttpHeaders defaultHeaders(Long userId) {
