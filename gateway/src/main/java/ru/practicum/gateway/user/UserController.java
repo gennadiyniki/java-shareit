@@ -4,6 +4,9 @@ import ru.practicum.dto.user.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,43 +19,48 @@ public class UserController {
     private final UserClient userClient;
 
     @PostMapping
-    public Object createUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) {
         log.info("Gateway: createUser request {}", userDto);
-        return userClient.createUser(userDto).getBody();
+        ResponseEntity<Object> response = userClient.createUser(userDto);
+        return fixResponseContentType(response);
     }
 
     @GetMapping("/{userId}")
-    public Object getUser(@PathVariable Long userId) {
+    public ResponseEntity<Object> getUser(@PathVariable Long userId) {
         ResponseEntity<Object> error = validateId(userId);
-        if (error != null) return error.getBody();
+        if (error != null) return error;
 
         log.info("Gateway: getUser request id={}", userId);
-        return userClient.getUser(userId).getBody();
+        ResponseEntity<Object> response = userClient.getUser(userId);
+        return fixResponseContentType(response);
     }
 
     @GetMapping
-    public Object getAllUsers() {
+    public ResponseEntity<Object> getAllUsers() {
         log.info("Gateway: getAllUsers request");
-        return userClient.getAllUsers().getBody();
+        ResponseEntity<Object> response = userClient.getAllUsers();
+        return fixResponseContentType(response);
     }
 
     @PatchMapping("/{userId}")
-    public Object updateUser(@PathVariable Long userId,
-                             @RequestBody UserDto userDto) {
+    public ResponseEntity<Object> updateUser(@PathVariable Long userId,
+                                             @RequestBody UserDto userDto) {
         ResponseEntity<Object> error = validateId(userId);
-        if (error != null) return error.getBody();
+        if (error != null) return error;
 
         log.info("Gateway: updateUser request id={}, dto={}", userId, userDto);
-        return userClient.updateUser(userId, userDto).getBody();
+        ResponseEntity<Object> response = userClient.updateUser(userId, userDto);
+        return fixResponseContentType(response);
     }
 
     @DeleteMapping("/{userId}")
-    public Object deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<Object> deleteUser(@PathVariable Long userId) {
         ResponseEntity<Object> error = validateId(userId);
-        if (error != null) return error.getBody();
+        if (error != null) return error;
 
         log.info("Gateway: deleteUser request id={}", userId);
-        return userClient.deleteUser(userId).getBody();
+        ResponseEntity<Object> response = userClient.deleteUser(userId);
+        return fixResponseContentType(response);
     }
 
     private ResponseEntity<Object> validateId(Long id) {
@@ -60,5 +68,36 @@ public class UserController {
             return ResponseEntity.badRequest().body("Id must be positive");
         }
         return null;
+    }
+
+    /**
+     * Исправляет Content-Type в ответе, если он application/octet-stream
+     * и устанавливает правильный application/json
+     */
+    private ResponseEntity<Object> fixResponseContentType(ResponseEntity<Object> response) {
+        if (response == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error");
+        }
+
+        // Если статус ошибки (4xx или 5xx) и Content-Type octet-stream
+        if ((response.getStatusCode().is4xxClientError() ||
+                response.getStatusCode().is5xxServerError()) &&
+                response.getHeaders().getContentType() != null &&
+                response.getHeaders().getContentType().includes(MediaType.APPLICATION_OCTET_STREAM)) {
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.putAll(response.getHeaders());
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            return new ResponseEntity<>(
+                    response.getBody(),
+                    headers,
+                    response.getStatusCode()
+            );
+        }
+
+        // Для успешных ответов или правильных Content-Type возвращаем как есть
+        return response;
     }
 }
