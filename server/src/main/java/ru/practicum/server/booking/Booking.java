@@ -23,10 +23,10 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "start_time", nullable = false) // Теперь имя колонки совпадает с БД
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime start;
 
-    @Column(name = "end_time", nullable = false) // Приводим в соответствие с БД
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime end;
 
     //вещь

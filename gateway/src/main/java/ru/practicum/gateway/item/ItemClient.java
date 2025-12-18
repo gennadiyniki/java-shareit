@@ -22,9 +22,7 @@ public class ItemClient extends BaseClient {
         super(ClientRestFactory.build(serverUrl + API_PREFIX, builder));
     }
 
-
     // Методы для работы с вещами
-
     public ResponseEntity<Object> createItem(Long ownerId, ItemDto itemDto) {
         log.debug("ItemClient: создание вещи владельцем {}", ownerId);
         return post("", ownerId, itemDto);

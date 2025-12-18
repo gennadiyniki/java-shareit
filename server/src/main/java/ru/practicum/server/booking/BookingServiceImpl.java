@@ -88,28 +88,28 @@ public class BookingServiceImpl implements BookingService {
             }
 
             if (bookingDto.getStart().isBefore(now)) {
-                log.error("❌ Дата начала в прошлом: start={}, now={}", bookingDto.getStart(), now);
+                log.error("Дата начала в прошлом: start={}, now={}", bookingDto.getStart(), now);
                 throw new ValidationException("Дата начала должна быть в будущем");
             }
 
             if (bookingDto.getEnd().isBefore(now)) {
-                log.error("❌ Дата окончания в прошлом: end={}, now={}", bookingDto.getEnd(), now);
+                log.error("Дата окончания в прошлом: end={}, now={}", bookingDto.getEnd(), now);
                 throw new ValidationException("Дата окончания должна быть в будущем");
             }
 
-            // 6. Проверяем, нет ли конфликтующих бронирований
+            //Проверяем, нет ли конфликтующих бронирований
             log.debug("Проверка конфликтующих бронирований для itemId={}", item.getId());
             List<Booking> overlappingBookings = bookingRepository.findOverlappingBookings(
                     item.getId(), bookingDto.getStart(), bookingDto.getEnd());
 
             if (!overlappingBookings.isEmpty()) {
-                log.error("❌ Найдены конфликтующие бронирования: count={}", overlappingBookings.size());
+                log.error("Найдены конфликтующие бронирования: count={}", overlappingBookings.size());
                 overlappingBookings.forEach(b -> log.debug("Конфликтующее бронирование: id={}, start={}, end={}",
                         b.getId(), b.getStart(), b.getEnd()));
                 throw new ValidationException("На выбранные даты уже есть бронирование");
             }
 
-            // 7. Создаем бронирование
+            //Создаем бронирование
             log.debug("Создание объекта Booking из DTO");
             Booking booking = bookingMapper.toBooking(bookingDto);
             booking.setItem(item);
@@ -120,22 +120,22 @@ public class BookingServiceImpl implements BookingService {
             log.info("Сохранение бронирования в БД...");
             Booking savedBooking = bookingRepository.save(booking);
 
-            log.info("✅ Бронирование успешно создано: id={}, itemId={}, bookerId={}, status={}",
+            log.info("Бронирование успешно создано: id={}, itemId={}, bookerId={}, status={}",
                     savedBooking.getId(), savedBooking.getItem().getId(),
                     savedBooking.getBooker().getId(), savedBooking.getStatus());
 
             BookingResponseDto response = bookingMapper.toBookingResponseDto(savedBooking);
-            log.info("=== КОНЕЦ СОЗДАНИЯ БРОНИРОВАНИЯ ===");
+            log.info("ОНЕЦ СОЗДАНИЯ БРОНИРОВАНИЯ");
 
             return response;
 
         } catch (NotFoundException | ValidationException | AccessDeniedException e) {
             // Логируем известные исключения
-            log.error("⚠️ Известное исключение при создании бронирования: {}", e.getMessage());
+            log.error("Известное исключение при создании бронирования: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             // Логируем неизвестные исключения
-            log.error("💥 Неизвестная ошибка при создании бронирования", e);
+            log.error("Неизвестная ошибка при создании бронирования", e);
             throw new ValidationException("Ошибка при создании бронирования: " + e.getMessage());
         }
     }
@@ -143,7 +143,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingResponseDto bookingStatusUpdate(Long bookingId, Boolean approved, Long userId) {
-        log.info("=== ОБНОВЛЕНИЕ СТАТУСА БРОНИРОВАНИЯ ===");
+        log.info("ОБНОВЛЕНИЕ СТАТУСА БРОНИРОВАНИЯ");
         log.info("bookingId: {}, approved: {}, userId: {}", bookingId, approved, userId);
 
         try {
@@ -153,14 +153,14 @@ public class BookingServiceImpl implements BookingService {
 
             // Проверяем, что пользователь - владелец вещи
             if (!booking.getItem().getOwner().getId().equals(userId)) {
-                log.error("❌ Пользователь не является владельцем: userId={}, ownerId={}",
+                log.error("Пользователь не является владельцем: userId={}, ownerId={}",
                         userId, booking.getItem().getOwner().getId());
                 throw new AccessDeniedException("Только владелец может подтверждать бронь");
             }
 
             // Проверяем текущий статус
             if (booking.getStatus() != BookingStatus.WAITING) {
-                log.error("❌ Статус бронирования уже изменен: currentStatus={}", booking.getStatus());
+                log.error("Статус бронирования уже изменен: currentStatus={}", booking.getStatus());
                 throw new ValidationException("Статус брони уже изменен");
             }
 
@@ -171,7 +171,7 @@ public class BookingServiceImpl implements BookingService {
             log.info("Сохранение обновленного бронирования...");
             Booking updatedBooking = bookingRepository.save(booking);
 
-            log.info("✅ Статус бронирования обновлен: id={}, newStatus={}",
+            log.info("Статус бронирования обновлен: id={}, newStatus={}",
                     updatedBooking.getId(), updatedBooking.getStatus());
 
             return bookingMapper.toBookingResponseDto(updatedBooking);
@@ -184,7 +184,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDto getBookingById(Long bookingId, Long userId) {
-        log.info("=== ПОЛУЧЕНИЕ БРОНИРОВАНИЯ ПО ID ===");
+        log.info("ПОЛУЧЕНИЕ БРОНИРОВАНИЯ ПО ID");
         log.info("bookingId: {}, userId: {}", bookingId, userId);
 
         try {
@@ -198,11 +198,11 @@ public class BookingServiceImpl implements BookingService {
             log.debug("Проверка прав доступа: isBooker={}, isOwner={}", isBooker, isOwner);
 
             if (!isBooker && !isOwner) {
-                log.error("❌ Доступ запрещен: userId={} не является ни booker ни owner", userId);
+                log.error("Доступ запрещен: userId={} не является ни booker ни owner", userId);
                 throw new AccessDeniedException("Доступ запрещен");
             }
 
-            log.info("✅ Бронирование доступно для пользователя: userId={}", userId);
+            log.info("Бронирование доступно для пользователя: userId={}", userId);
             return bookingMapper.toBookingResponseDto(booking);
 
         } catch (Exception e) {
@@ -213,14 +213,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponseDto> getUserBookings(Long bookerId, BookingState state, int from, int size) {
-        log.info("=== ПОЛУЧЕНИЕ БРОНИРОВАНИЙ ПОЛЬЗОВАТЕЛЯ ===");
+        log.info("ПОЛУЧЕНИЕ БРОНИРОВАНИЙ ПОЛЬЗОВАТЕЛЯ");
         log.info("bookerId: {}, state: {}, from: {}, size: {}", bookerId, state, from, size);
 
         try {
             // Проверяем существование пользователя
             userRepository.findById(bookerId)
                     .orElseThrow(() -> {
-                        log.error("❌ Пользователь не найден: bookerId={}", bookerId);
+                        log.error("Пользователь не найден: bookerId={}", bookerId);
                         return new NotFoundException("Пользователь не найден");
                     });
 
@@ -255,7 +255,7 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingRepository.findByBookerId(bookerId, pageable);
             }
 
-            log.info("✅ Найдено {} бронирований для пользователя {}", bookings.size(), bookerId);
+            log.info("Найдено {} бронирований для пользователя {}", bookings.size(), bookerId);
             return bookings.stream()
                     .map(bookingMapper::toBookingResponseDto)
                     .collect(Collectors.toList());
@@ -268,14 +268,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponseDto> getOwnerBookings(Long ownerId, BookingState state, int from, int size) {
-        log.info("=== ПОЛУЧЕНИЕ БРОНИРОВАНИЙ ВЛАДЕЛЬЦА ===");
+        log.info("ПОЛУЧЕНИЕ БРОНИРОВАНИЙ ВЛАДЕЛЬЦА");
         log.info("ownerId: {}, state: {}, from: {}, size: {}", ownerId, state, from, size);
 
         try {
             // Проверяем существование пользователя
             userRepository.findById(ownerId)
                     .orElseThrow(() -> {
-                        log.error("❌ Владелец не найден: ownerId={}", ownerId);
+                        log.error("Владелец не найден: ownerId={}", ownerId);
                         return new NotFoundException("Пользователь не найден");
                     });
 
@@ -304,7 +304,7 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingRepository.findByItemOwnerId(ownerId, pageable);
             }
 
-            log.info("✅ Найдено {} бронирований для владельца {}", bookings.size(), ownerId);
+            log.info("Найдено {} бронирований для владельца {}", bookings.size(), ownerId);
             return bookings.stream()
                     .map(bookingMapper::toBookingResponseDto)
                     .collect(Collectors.toList());
@@ -320,10 +320,10 @@ public class BookingServiceImpl implements BookingService {
         log.debug("Поиск бронирования по id: {}", bookingId);
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> {
-                    log.error("❌ Бронь не найдена: bookingId={}", bookingId);
+                    log.error("Бронь не найдена: bookingId={}", bookingId);
                     return new NotFoundException("Бронь не найдена");
                 });
-        log.debug("✅ Бронь найдена: id={}", booking.getId());
+        log.debug("Бронь найдена: id={}", booking.getId());
         return booking;
     }
 }

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class ItemRequestMapper {
 
-    // Метод для: GET /requests сокращенная версия ItemRequest в ItemRequestShortDto
+    // Метод для: GET /requests
     public static ItemRequestShortDto toShortDto(ItemRequest itemRequest) {
         if (itemRequest == null) {
             return null;

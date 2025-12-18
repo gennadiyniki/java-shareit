@@ -14,7 +14,6 @@ public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> 
     // Найти все запросы пользователя, отсортированные по дате
     List<ItemRequest> findByRequesterIdOrderByCreatedDesc(Long requesterId);
 
-    // ДОБАВИТЬ: Найти все запросы пользователя с загруженными вещами
     @Query("SELECT DISTINCT ir FROM ItemRequest ir " +
             "LEFT JOIN FETCH ir.items " +
             "WHERE ir.requester.id = :requesterId " +
@@ -24,7 +23,6 @@ public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> 
     // Поиск всех запросов, созданных не указанным пользователем
     Page<ItemRequest> findByRequesterIdNot(Long requesterId, Pageable pageable);
 
-    // ДОБАВИТЬ: Найти все запросы других пользователей с загруженными вещами
     @Query("SELECT DISTINCT ir FROM ItemRequest ir " +
             "LEFT JOIN FETCH ir.items " +
             "WHERE ir.requester.id <> :requesterId")
