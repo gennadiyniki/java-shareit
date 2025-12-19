@@ -24,7 +24,7 @@ public class BookingClient extends BaseClient {
         super(ClientRestFactory.build(serverUrl + API_PREFIX, builder));
     }
 
-    // =============== Методы для работы с бронированиями ===============
+    //Методы для работы с бронированиями
 
     public ResponseEntity<Object> createBooking(Long bookerId, BookingDto bookingDto) {
         log.debug("BookingClient: создание бронирования пользователем {}", bookerId);

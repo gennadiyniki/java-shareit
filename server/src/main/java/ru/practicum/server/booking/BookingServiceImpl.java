@@ -42,47 +42,47 @@ public class BookingServiceImpl implements BookingService {
                 bookerId, bookingDto.getItemId(), bookingDto.getStart(), bookingDto.getEnd());
 
         try {
-            // 1. Проверяем существование пользователя
+            //Проверяем существование пользователя
             log.debug("Поиск пользователя с id={}", bookerId);
             User booker = userRepository.findById(bookerId)
                     .orElseThrow(() -> {
-                        log.error("❌ Пользователь не найден: bookerId={}", bookerId);
+                        log.error("Пользователь не найден: bookerId={}", bookerId);
                         return new NotFoundException("Пользователь не найден");
                     });
-            log.info("✅ Пользователь найден: id={}, name={}", booker.getId(), booker.getName());
+            log.info("Пользователь найден: id={}, name={}", booker.getId(), booker.getName());
 
             // 2. Проверяем существование вещи
             log.debug("Поиск вещи с id={}", bookingDto.getItemId());
             Item item = itemRepository.findById(bookingDto.getItemId())
                     .orElseThrow(() -> {
-                        log.error("❌ Вещь не найдена: itemId={}", bookingDto.getItemId());
+                        log.error("Вещь не найдена: itemId={}", bookingDto.getItemId());
                         return new NotFoundException("Вещь не найдена");
                     });
             log.info("✅ Вещь найдена: id={}, name={}, ownerId={}, available={}",
                     item.getId(), item.getName(), item.getOwner().getId(), item.getAvailable());
 
-            // 3. Проверяем, что пользователь не владелец
+            //Проверяем, что пользователь не владелец
             if (item.getOwner().getId().equals(bookerId)) {
-                log.error("❌ Владелец пытается забронировать свою вещь: ownerId={}, bookerId={}",
+                log.error("Владелец пытается забронировать свою вещь: ownerId={}, bookerId={}",
                         item.getOwner().getId(), bookerId);
                 throw new AccessDeniedException("Владелец не может бронировать свою вещь");
             }
 
-            // 4. Проверяем доступность вещи
+            //Проверяем доступность вещи
             if (!item.getAvailable()) {
-                log.error("❌ Вещь недоступна для бронирования: itemId={}, available={}",
+                log.error("Вещь недоступна для бронирования: itemId={}, available={}",
                         item.getId(), item.getAvailable());
                 throw new ValidationException("Вещь недоступна для бронирования");
             }
 
-            // 5. Валидация дат
+            //Валидация дат
             LocalDateTime now = LocalDateTime.now();
             log.debug("Текущее время: {}", now);
             log.debug("Дата начала бронирования: {}", bookingDto.getStart());
             log.debug("Дата окончания бронирования: {}", bookingDto.getEnd());
 
             if (bookingDto.getStart().isAfter(bookingDto.getEnd())) {
-                log.error("❌ Дата начала позже даты окончания: start={}, end={}",
+                log.error("Дата начала позже даты окончания: start={}, end={}",
                         bookingDto.getStart(), bookingDto.getEnd());
                 throw new ValidationException("Дата начала должна быть раньше даты окончания");
             }

@@ -119,7 +119,6 @@ public class BookingController {
         log.debug("Валидация пагинации пройдена: from={}, size={}", from, size);
     }
 
-
     private void validateBookingDates(BookingDto bookingDto) {
         if (bookingDto.getStart().isBefore(LocalDateTime.now())) {
             throw new GatewayValidationException("Дата начала не может быть в прошлом");

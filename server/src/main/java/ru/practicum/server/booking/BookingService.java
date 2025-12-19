@@ -18,5 +18,4 @@ public interface BookingService {
 
     List<BookingResponseDto> getOwnerBookings(Long ownerId, BookingState state, int from, int size);
 
-
 }

@@ -105,5 +105,4 @@ public class ItemRequestMapper {
                 .map(ItemRequestMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
-
 }
