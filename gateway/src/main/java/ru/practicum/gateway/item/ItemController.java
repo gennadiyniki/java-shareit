@@ -73,7 +73,7 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> updateItem(
             @Positive(message = "ID должен быть больше 0") @PathVariable Long itemId,
-            @RequestBody ItemDto itemDto,
+            @Valid @RequestBody ItemDto itemDto,
             @Positive(message = "ID должен быть больше 0") @RequestHeader(userHeader) Long userId) {
         log.info("PATCH /items/{} - Запрос на обновление вещи пользователем {}", itemId, userId);
 

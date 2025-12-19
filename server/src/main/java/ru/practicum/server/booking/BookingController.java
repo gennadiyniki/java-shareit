@@ -1,10 +1,8 @@
 package ru.practicum.server.booking;
 
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.booking.BookingDto;
 import ru.practicum.dto.booking.BookingResponseDto;
@@ -12,7 +10,6 @@ import ru.practicum.dto.booking.BookingState;
 
 import java.util.List;
 
-@Validated
 @RestController
 @RequestMapping("/bookings")
 public class BookingController {
@@ -29,7 +26,7 @@ public class BookingController {
     @PostMapping
     public BookingResponseDto createBooking(
             @RequestHeader("X-Sharer-User-Id") Long bookerId,
-            @Valid @RequestBody BookingDto bookingDto) {
+            @RequestBody BookingDto bookingDto) {  // ← УБРАЛ @Valid
         log.info("POST /bookings - Запрос на создание бронирования пользователем {}: {}", bookerId, bookingDto);
         BookingResponseDto result = bookingService.createBooking(bookerId, bookingDto);
         log.info("POST /bookings - Бронирование успешно создано: {}", result);

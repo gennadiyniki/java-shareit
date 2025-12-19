@@ -1,5 +1,7 @@
 package ru.practicum.gateway.user;
 
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 import ru.practicum.dto.user.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class UserController {
 
     private final UserClient userClient;
@@ -26,7 +29,9 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Object> getUser(@PathVariable Long userId) {
+    public ResponseEntity<Object> getUser(
+            @Positive(message = "ID пользователя должен быть больше 0")
+            @PathVariable Long userId) {
         ResponseEntity<Object> error = validateId(userId);
         if (error != null) return error;
 
@@ -43,8 +48,10 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<Object> updateUser(@PathVariable Long userId,
-                                             @RequestBody UserDto userDto) {
+    public ResponseEntity<Object> updateUser(
+            @Positive(message = "ID пользователя должен быть больше 0")
+            @PathVariable Long userId,
+            @RequestBody UserDto userDto) {
         ResponseEntity<Object> error = validateId(userId);
         if (error != null) return error;
 
@@ -54,7 +61,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Object> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<Object> deleteUser(
+            @Positive(message = "ID пользователя должен быть больше 0")
+            @PathVariable Long userId) {
         ResponseEntity<Object> error = validateId(userId);
         if (error != null) return error;
 
